@@ -2,6 +2,7 @@ package it.unibz.DamnSmallChat;
 
 import java.net.*;
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.Thread;
 
 
@@ -11,12 +12,9 @@ public class DamnSmallUDPChatClient extends Thread{
 	
 	private InetAddress mServerAddress;
 	private int mServerPort;
-	private String mMessage;
 	private DatagramSocket mDatagramSocket;
 	private PrintService mLog;
 	private Channel mCurrentChannel;
-	private byte[] mMessageBytes;
-	private DatagramPacket mDatagramPacket;
 	private BufferedReader in;
 
 	private String mNickname;
@@ -27,7 +25,6 @@ public class DamnSmallUDPChatClient extends Thread{
 		try{
 			mServerAddress = InetAddress.getByName(serverAddress);
 			mServerPort = Integer.parseInt(serverPort);
-			mMessage = null;
 			mDatagramSocket = new DatagramSocket();
 			mLog = log;
 			mDatagramSocket.setSoTimeout(TIME_OUT);
@@ -43,7 +40,7 @@ public class DamnSmallUDPChatClient extends Thread{
 	public void run(){
 		try{
 			String message = "";
-			while( message = in.readLine()) != null) { //CTRL+D or CTRL+Z to terminate
+			while( (message = in.readLine()) != null) { //CTRL+D or CTRL+Z to terminate
 				mCurrentChannel.print(mNickname + " :   ");
 				message = mNickname + " :   " + message;
 				this.sendMessage(message);
@@ -56,18 +53,19 @@ public class DamnSmallUDPChatClient extends Thread{
 	}
 
 
-	public void sendMessage(String message){			
-			byte[] msgBytes = msg.getBytes();
-			DatagramPacket packet = new DatagramPacket(msgBytes,msgBytes.length,serverAddress,serverPort);
+	public void sendMessage(String message){		
+		try{
+			byte[] msgBytes = message.getBytes();
+			DatagramPacket packet = new DatagramPacket(msgBytes,msgBytes.length,this.mServerAddress,this.mServerPort);
 			mLog.print("trying to contact echo server...");
-			ds.send(packet);
+			this.mDatagramSocket.send(packet);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}
 		finally {
-			if(ds != null)
-				ds.close();
+			if(this.mDatagramSocket != null)
+				this.mDatagramSocket.close();
 		}
 	}
 }

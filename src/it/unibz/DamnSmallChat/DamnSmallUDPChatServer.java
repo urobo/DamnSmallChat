@@ -1,3 +1,5 @@
+package it.unibz.DamnSmallChat;
+
 import java.net.*;
 import java.lang.Thread;
 
