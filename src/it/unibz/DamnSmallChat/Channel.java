@@ -1,14 +1,14 @@
 package it.unibz.DamnSmallChat;
 
-public class Channel{
+public class Channel {
 	private PrintService out;
 
-	public Channel (PrintService out){
+	public Channel(PrintService out) {
 		this.out = out;
 	}
 
-	public void print(String msg){
+	public void print(String msg) {
 		this.out.print(msg);
 	}
-	
+
 }

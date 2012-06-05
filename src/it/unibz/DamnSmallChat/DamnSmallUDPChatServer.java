@@ -6,9 +6,9 @@ import java.io.PrintWriter;
 import java.lang.Thread;
 
 public class DamnSmallUDPChatServer extends Thread {
-	
+
 	private static int BUF_SIZE = 2048;
-	
+
 	private InetAddress mAddress;
 	private int mPort;
 	private DatagramSocket mDatagramSocket;
@@ -17,22 +17,25 @@ public class DamnSmallUDPChatServer extends Thread {
 	private byte[] mReceiveBuffer;
 	private Channel mCurrentChannel;
 
-
-	public DamnSmallUDPChatServer(String myAddress, String myPort, Channel currentChannel){
+	public DamnSmallUDPChatServer(String myAddress, String myPort,
+			Channel currentChannel) {
 		mDatagramSocket = null;
-		try{
+		try {
 			mAddress = InetAddress.getByName(myAddress);
 			mPort = Integer.parseInt(myPort);
-			mDatagramSocket = new DatagramSocket(mPort,mAddress);
+			mDatagramSocket = new DatagramSocket(mPort, mAddress);
 			mReceiveBuffer = new byte[BUF_SIZE];
 			mDatagramPacket = new DatagramPacket(mReceiveBuffer, BUF_SIZE);
-			PrintWriter serverLogWriter = new PrintWriter(new FileWriter("server.log"));			
-			mLog = new PrintService("Server", this.mDatagramSocket.getInetAddress(), this.mDatagramSocket.getLocalPort(), serverLogWriter);
-		}catch(Exception e){
+			PrintWriter serverLogWriter = new PrintWriter(new FileWriter(
+					"server.log"));
+			mLog = new PrintService("Server",
+					this.mDatagramSocket.getInetAddress(),
+					this.mDatagramSocket.getLocalPort(), serverLogWriter);
+		} catch (Exception e) {
 
 		}
 	}
-	
+
 	/**
 	 * @return the mAddress
 	 */
@@ -41,7 +44,8 @@ public class DamnSmallUDPChatServer extends Thread {
 	}
 
 	/**
-	 * @param mAddress the mAddress to set
+	 * @param mAddress
+	 *            the mAddress to set
 	 */
 	public void setmAddress(InetAddress mAddress) {
 		this.mAddress = mAddress;
@@ -55,7 +59,8 @@ public class DamnSmallUDPChatServer extends Thread {
 	}
 
 	/**
-	 * @param mPort the mPort to set
+	 * @param mPort
+	 *            the mPort to set
 	 */
 	public void setmPort(int mPort) {
 		this.mPort = mPort;
@@ -69,7 +74,8 @@ public class DamnSmallUDPChatServer extends Thread {
 	}
 
 	/**
-	 * @param mDatagramSocket the mDatagramSocket to set
+	 * @param mDatagramSocket
+	 *            the mDatagramSocket to set
 	 */
 	public void setmDatagramSocket(DatagramSocket mDatagramSocket) {
 		this.mDatagramSocket = mDatagramSocket;
@@ -83,7 +89,8 @@ public class DamnSmallUDPChatServer extends Thread {
 	}
 
 	/**
-	 * @param mDatagramPacket the mDatagramPacket to set
+	 * @param mDatagramPacket
+	 *            the mDatagramPacket to set
 	 */
 	public void setmDatagramPacket(DatagramPacket mDatagramPacket) {
 		this.mDatagramPacket = mDatagramPacket;
@@ -97,7 +104,8 @@ public class DamnSmallUDPChatServer extends Thread {
 	}
 
 	/**
-	 * @param mLog the mLog to set
+	 * @param mLog
+	 *            the mLog to set
 	 */
 	public void setmLog(PrintService mLog) {
 		this.mLog = mLog;
@@ -111,7 +119,8 @@ public class DamnSmallUDPChatServer extends Thread {
 	}
 
 	/**
-	 * @param mReceiveBuffer the mReceiveBuffer to set
+	 * @param mReceiveBuffer
+	 *            the mReceiveBuffer to set
 	 */
 	public void setmReceiveBuffer(byte[] mReceiveBuffer) {
 		this.mReceiveBuffer = mReceiveBuffer;
@@ -125,24 +134,28 @@ public class DamnSmallUDPChatServer extends Thread {
 	}
 
 	/**
-	 * @param mCurrentChannel the mCurrentChannel to set
+	 * @param mCurrentChannel
+	 *            the mCurrentChannel to set
 	 */
 	public void setmCurrentChannel(Channel mCurrentChannel) {
 		this.mCurrentChannel = mCurrentChannel;
 	}
 
-	public void run(){
-		try{
-			while(true){
+	public void run() {
+		try {
+			while (true) {
 				mDatagramSocket.receive(mDatagramPacket);
-				mLog.print("Server received message from ( "+ mDatagramPacket.getAddress() + "," + mDatagramPacket.getPort() + ") of length " + mDatagramPacket.getLength());
+				mLog.print("Server received message from ( "
+						+ mDatagramPacket.getAddress() + ","
+						+ mDatagramPacket.getPort() + ") of length "
+						+ mDatagramPacket.getLength());
 				mCurrentChannel.print(new String(mDatagramPacket.getData()));
 			}
-		}catch (Exception e){
-				e.printStackTrace();
-		}finally{
-			if(mDatagramSocket!=null)
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (mDatagramSocket != null)
 				mDatagramSocket.close();
 		}
-	}	
+	}
 }

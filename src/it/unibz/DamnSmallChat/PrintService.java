@@ -1,6 +1,5 @@
 package it.unibz.DamnSmallChat;
 
-
 import java.io.PrintWriter;
 import java.net.InetAddress;
 
@@ -9,13 +8,13 @@ public class PrintService {
 	private InetAddress a;
 	private int p;
 	private PrintWriter outFile;
-	
+
 	public PrintService(String name) {
 		super();
 		this.name = name;
 	}
-	
-	public PrintService(String name, InetAddress a, int p, PrintWriter logFile){
+
+	public PrintService(String name, InetAddress a, int p, PrintWriter logFile) {
 		super();
 		this.name = name;
 		this.a = a;
@@ -26,12 +25,12 @@ public class PrintService {
 	public void print(String msg) {
 		System.out.println(msg);
 	}
-	
-	public void log(String msg){
-		outFile.println( name + "(" + a.getHostName() + "," + p + "): " + msg);		
+
+	public void log(String msg) {
+		outFile.println(name + "(" + a.getHostName() + "," + p + "): " + msg);
 	}
-	
-	public void close(){
+
+	public void close() {
 		this.outFile.close();
 	}
 }

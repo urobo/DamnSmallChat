@@ -7,11 +7,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.Thread;
 
+public class DamnSmallUDPChatClient extends Thread {
 
-public class DamnSmallUDPChatClient extends Thread{
-	
 	private static int TIME_OUT = 5000;
-	
+
 	private InetAddress mServerAddress;
 	private int mServerPort;
 	private DatagramSocket mDatagramSocket;
@@ -21,26 +20,28 @@ public class DamnSmallUDPChatClient extends Thread{
 
 	private String mNickname;
 
-
-	public DamnSmallUDPChatClient(String serverAddress, String serverPort, Channel currentChannel, String nickname){
+	public DamnSmallUDPChatClient(String serverAddress, String serverPort,
+			Channel currentChannel, String nickname) {
 		mDatagramSocket = null;
-		try{
-			
+		try {
+
 			mServerAddress = InetAddress.getByName(serverAddress);
 			mServerPort = Integer.parseInt(serverPort);
 			mDatagramSocket = new DatagramSocket();
-			PrintWriter clientLogWriter = new PrintWriter(new FileWriter("client.log"));
-			mLog = new PrintService("Client", this.mDatagramSocket.getInetAddress(), this.mDatagramSocket.getLocalPort() , clientLogWriter);
+			PrintWriter clientLogWriter = new PrintWriter(new FileWriter(
+					"client.log"));
+			mLog = new PrintService("Client",
+					this.mDatagramSocket.getInetAddress(),
+					this.mDatagramSocket.getLocalPort(), clientLogWriter);
 			mDatagramSocket.setSoTimeout(TIME_OUT);
 			mNickname = nickname;
 			mCurrentChannel = currentChannel;
 			in = new BufferedReader(new InputStreamReader(System.in));
-		}catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-		
-	
+
 	/**
 	 * @return the mServerAddress
 	 */
@@ -48,14 +49,13 @@ public class DamnSmallUDPChatClient extends Thread{
 		return mServerAddress;
 	}
 
-
 	/**
-	 * @param mServerAddress the mServerAddress to set
+	 * @param mServerAddress
+	 *            the mServerAddress to set
 	 */
 	public void setmServerAddress(InetAddress mServerAddress) {
 		this.mServerAddress = mServerAddress;
 	}
-
 
 	/**
 	 * @return the mServerPort
@@ -64,14 +64,13 @@ public class DamnSmallUDPChatClient extends Thread{
 		return mServerPort;
 	}
 
-
 	/**
-	 * @param mServerPort the mServerPort to set
+	 * @param mServerPort
+	 *            the mServerPort to set
 	 */
 	public void setmServerPort(int mServerPort) {
 		this.mServerPort = mServerPort;
 	}
-
 
 	/**
 	 * @return the mDatagramSocket
@@ -80,14 +79,13 @@ public class DamnSmallUDPChatClient extends Thread{
 		return mDatagramSocket;
 	}
 
-
 	/**
-	 * @param mDatagramSocket the mDatagramSocket to set
+	 * @param mDatagramSocket
+	 *            the mDatagramSocket to set
 	 */
 	public void setmDatagramSocket(DatagramSocket mDatagramSocket) {
 		this.mDatagramSocket = mDatagramSocket;
 	}
-
 
 	/**
 	 * @return the mLog
@@ -96,14 +94,13 @@ public class DamnSmallUDPChatClient extends Thread{
 		return mLog;
 	}
 
-
 	/**
-	 * @param mLog the mLog to set
+	 * @param mLog
+	 *            the mLog to set
 	 */
 	public void setmLog(PrintService mLog) {
 		this.mLog = mLog;
 	}
-
 
 	/**
 	 * @return the mCurrentChannel
@@ -112,14 +109,13 @@ public class DamnSmallUDPChatClient extends Thread{
 		return mCurrentChannel;
 	}
 
-
 	/**
-	 * @param mCurrentChannel the mCurrentChannel to set
+	 * @param mCurrentChannel
+	 *            the mCurrentChannel to set
 	 */
 	public void setmCurrentChannel(Channel mCurrentChannel) {
 		this.mCurrentChannel = mCurrentChannel;
 	}
-
 
 	/**
 	 * @return the in
@@ -128,14 +124,13 @@ public class DamnSmallUDPChatClient extends Thread{
 		return in;
 	}
 
-
 	/**
-	 * @param in the in to set
+	 * @param in
+	 *            the in to set
 	 */
 	public void setIn(BufferedReader in) {
 		this.in = in;
 	}
-
 
 	/**
 	 * @return the mNickname
@@ -144,43 +139,41 @@ public class DamnSmallUDPChatClient extends Thread{
 		return mNickname;
 	}
 
-
 	/**
-	 * @param mNickname the mNickname to set
+	 * @param mNickname
+	 *            the mNickname to set
 	 */
 	public void setmNickname(String mNickname) {
 		this.mNickname = mNickname;
 	}
 
-
-	public void run(){
-		try{
+	public void run() {
+		try {
 			String message = "";
-			while( (message = in.readLine()) != null) { //CTRL+D or CTRL+Z to terminate
+			while ((message = in.readLine()) != null) { // CTRL+D or CTRL+Z to
+														// terminate
 				mCurrentChannel.print(mNickname + " :   ");
 				message = mNickname + " :   " + message;
 				this.sendMessage(message);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 
 		}
 	}
 
-
-	public void sendMessage(String message){		
-		try{
+	public void sendMessage(String message) {
+		try {
 			byte[] msgBytes = message.getBytes();
-			DatagramPacket packet = new DatagramPacket(msgBytes,msgBytes.length,this.mServerAddress,this.mServerPort);
+			DatagramPacket packet = new DatagramPacket(msgBytes,
+					msgBytes.length, this.mServerAddress, this.mServerPort);
 			mLog.print("trying to contact echo server...");
 			this.mDatagramSocket.send(packet);
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
-			if(this.mDatagramSocket != null)
+		} finally {
+			if (this.mDatagramSocket != null)
 				this.mDatagramSocket.close();
 		}
 	}
